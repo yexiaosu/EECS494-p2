@@ -11,13 +11,12 @@ public class BattleManager : MonoBehaviour
     public int maxTurns = 20;
     public Text turn;
 
-    private List<int> handCards;
     private List<int> playerDeck;
     private List<int> enemyDeck;
-    private enum BattleState { START, PLAYER, ENEMY, WIN, LOSE};
-    private BattleState bstate;
     private int currPlayerCardIdx = 0;
+    private int lastPlayerCardIdx = -1;
     private int currEnemyCardIdx = 0;
+    private int lastEnemyCardIdx = -1;
     private List<int> playerRune = new List<int>();
     private List<int> enemyRune = new List<int>();
     private List<int> playerSkip = new List<int>();
@@ -25,13 +24,13 @@ public class BattleManager : MonoBehaviour
     private GameObject player;
     private GameObject enemy;
     private int currTurn = 1;
+    private PlayerManager pm;
 
     // Start is called before the first frame update
     void Start()
     {
-        handCards = new List<int>(GameObject.Find("HasCards").GetComponent<HasCards>().handCards);
-        playerDeck = new List<int>(GameObject.Find("HasCards").GetComponent<HasCards>().playerDeck);
-        bstate = BattleState.START;
+        pm = GameObject.Find("HasCards").GetComponent<PlayerManager>();
+        playerDeck = new List<int>(pm.playerDeck);
         StartCoroutine(SetupBattle());
     }
 
@@ -40,11 +39,25 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(1);
         player = GameObject.Find("Player");
         enemy = GameObject.Find("Enemy");
+        // deal with power ups
+        int powerUp = pm.nextPowerUp;
+        if (powerUp == 0)
+        {
+            // max health +500
+            pm.UpdateMaxHealth(500);
+
+        } else if (powerUp == 1)
+        {
+            // max manaAmp +50
+            pm.UpdateManaAmp(50);
+        }
+        player.GetComponent<HealthSystemForDummies>().AddToMaximumHealth(pm.maxHealth - 1000);
+        player.GetComponent<HealthSystemForDummies>().AddToCurrentHealth(pm.maxHealth - 1000);
+        player.GetComponent<Attributes>().UpdateManaAmp(pm.manaAmp);
         enemyDeck = new List<int>(GameObject.Find("EnemyDeck").GetComponent<Deck>().deckCards);
         enemyDeck.RemoveAll(item => item == -1);
         //playerDeck = new List<int>(GameObject.Find("PlayerDeck").GetComponent<Deck>().deckCards);
         //playerDeck.RemoveAll(item => item == -1);
-        bstate = BattleState.PLAYER;
         turn.text = currTurn.ToString();
         StartCoroutine(PlayerTurn());
     }
@@ -53,6 +66,14 @@ public class BattleManager : MonoBehaviour
     {
         // player use card
         currPlayerCardIdx = UseCard(playerDeck, currPlayerCardIdx, playerSkip, playerRune, player, enemy, playerStatusNumber, enemyStatusNumber);
+        Transform currCard = GameObject.Find("PlayerDeck").transform.GetChild(currPlayerCardIdx);
+        currCard.position = new Vector3(currCard.position.x, currCard.position.y + 1, currCard.position.z);
+        if (lastPlayerCardIdx >= 0)
+        {
+            Transform lastCard = GameObject.Find("PlayerDeck").transform.GetChild(lastPlayerCardIdx);
+            lastCard.position = new Vector3(lastCard.position.x, lastCard.position.y - 1, lastCard.position.z);
+        }
+        lastPlayerCardIdx = currPlayerCardIdx;
         currPlayerCardIdx++;
         if (currPlayerCardIdx >= playerDeck.Count)
         {
@@ -65,7 +86,6 @@ public class BattleManager : MonoBehaviour
             Lose();
         else if (enemy.GetComponent<HealthSystemForDummies>().IsAlive)
         {
-            bstate = BattleState.ENEMY;
             StartCoroutine(EnemyTurn());
         }
         else
@@ -74,8 +94,16 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator EnemyTurn()
     {
-        // player use card
+        // enemy use card
         currEnemyCardIdx = UseCard(enemyDeck, currEnemyCardIdx, enemySkip, enemyRune, enemy, player, enemyStatusNumber, playerStatusNumber);
+        Transform currCard = GameObject.Find("EnemyDeck").transform.GetChild(currEnemyCardIdx);
+        currCard.position = new Vector3(currCard.position.x, currCard.position.y + 1, currCard.position.z);
+        if (lastEnemyCardIdx >= 0)
+        {
+            Transform lastCard = GameObject.Find("EnemyDeck").transform.GetChild(lastEnemyCardIdx);
+            lastCard.position = new Vector3(lastCard.position.x, lastCard.position.y - 1, lastCard.position.z);
+        }
+        lastEnemyCardIdx = currEnemyCardIdx;
         currEnemyCardIdx++;
         if (currEnemyCardIdx >= enemyDeck.Count)
         {
@@ -87,10 +115,7 @@ public class BattleManager : MonoBehaviour
         if (currTurn > maxTurns)
             Lose();
         else if (player.GetComponent<HealthSystemForDummies>().IsAlive)
-        {
-            bstate = BattleState.PLAYER;
             StartCoroutine(PlayerTurn());
-        }
         else
             Lose();
     }
@@ -193,15 +218,33 @@ public class BattleManager : MonoBehaviour
 
     private void Lose()
     {
-        bstate = BattleState.LOSE;
         winOrLose.SetActive(true);
         winOrLose.transform.GetChild(0).GetComponent<Text>().text = "You lose!";
+        winOrLose.transform.GetChild(2).gameObject.SetActive(true);
+        winOrLose.transform.GetChild(3).gameObject.SetActive(false);
+        winOrLose.transform.GetChild(4).gameObject.SetActive(false);
     }
 
     private void Win()
     {
-        bstate = BattleState.WIN;
         winOrLose.SetActive(true);
         winOrLose.transform.GetChild(0).GetComponent<Text>().text = "You win!";
+        winOrLose.transform.GetChild(2).gameObject.SetActive(false);
+        if (GameObject.Find("LevelManager").GetComponent<LevelManager>().currLevel == 21)
+        {
+            winOrLose.transform.GetChild(4).gameObject.SetActive(true);
+            winOrLose.transform.GetChild(3).gameObject.SetActive(false);
+        }
+        else
+        {
+            winOrLose.transform.GetChild(4).gameObject.SetActive(false);
+            winOrLose.transform.GetChild(3).gameObject.SetActive(true);
+        }
+        EventBus.Publish<BattleWinEvent>(new BattleWinEvent());
     }
+}
+
+public class BattleWinEvent
+{
+    public BattleWinEvent() {  }
 }

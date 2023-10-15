@@ -19,17 +19,29 @@ public class HandCards : MonoBehaviour
             handCardsObjects.Add(child.gameObject);
         }
 
-        // draw four new cards when initialize
-        handCards.Add(Draw());
-        handCards.Add(Draw());
-        handCards.Add(Draw());
-        handCards.Add(Draw());
-        handCards.Add(Draw());
-        handCards.Add(Draw());
-        handCards.Add(Draw());
-        handCards.Add(Draw());
-        handCards.Add(Draw());
-        handCards.Add(Draw());
+        if (GameObject.Find("HasCards"))
+        {
+            handCards = new List<int>(GameObject.Find("HasCards").GetComponent<PlayerManager>().handCards);
+        }
+        if (handCards.Count == 0)
+        {
+            // draw five new cards when initialize
+            handCards.Add(Draw());
+            handCards.Add(Draw());
+            handCards.Add(Draw());
+            handCards.Add(Draw());
+            handCards.Add(Draw());
+        }
+        if (GameObject.Find("HasCards").GetComponent<PlayerManager>().nextPowerUp == 2)
+        {
+            // draw two new cards, until 10
+            int i = 0;
+            while (handCards.Count < 10 && i < 2)
+            {
+                handCards.Add(Draw());
+                i++;
+            }
+        }
 
         UpdateHandCards();
     }

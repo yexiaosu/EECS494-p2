@@ -27,7 +27,6 @@ public class CardManager : MonoBehaviour
             // Check if the destination is in a slot
             foreach (Transform slot in deck.transform)
             {
-                Debug.Log(card.transform.position);
                 if (slot.gameObject.GetComponent<BoxCollider2D>().bounds.Contains(card.transform.position))
                 {
                     // The card is placed into a slot of the deck

@@ -28,7 +28,8 @@ public class Attributes : MonoBehaviour
 
     public void UpdateManaAmp(int amount)
     {
-        manaAmp = Mathf.Clamp(manaAmp + amount, 0, int.MaxValue);
+        manaAmp = amount;
+        Debug.Log(manaAmp);
         manaAmpText.text = "Mana Amplification: " + manaAmp.ToString();
     }
 

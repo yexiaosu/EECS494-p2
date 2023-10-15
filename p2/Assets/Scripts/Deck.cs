@@ -19,7 +19,7 @@ public class Deck : MonoBehaviour
         {
             if (GameObject.Find("HasCards"))
             {
-                deckCards = new List<int>(GameObject.Find("HasCards").GetComponent<HasCards>().playerDeck);
+                deckCards = new List<int>(GameObject.Find("HasCards").GetComponent<PlayerManager>().playerDeck);
             }
         }
         else
@@ -42,7 +42,8 @@ public class Deck : MonoBehaviour
                 string cardName = cards[deckCards[deckSlotIndex]].Name;
                 GameObject currCardPos = child.GetChild(0).gameObject;
                 GameObject currCard = (GameObject)Instantiate(Resources.Load(cardName), currCardPos.transform.position, Quaternion.identity);
-                currCard.transform.localScale = currCard.transform.localScale * 0.7f;
+                Destroy(currCard.GetComponent<DragDrop>());
+                currCard.transform.localScale = currCard.transform.localScale;
                 currCard.transform.parent = child;
                 Destroy(currCardPos);
             }
