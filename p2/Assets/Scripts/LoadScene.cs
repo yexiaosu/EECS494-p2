@@ -15,7 +15,8 @@ public class LoadScene : MonoBehaviour
     public void Clear()
     {
         LevelManager.levelManagerInstance = null;
-        Destroy(GameObject.Find("HasCards"));
+        Destroy(GameObject.Find("PlayerManager"));
+        Destroy(GameObject.Find("EnemyManager"));
         Destroy(GameObject.Find("LevelManager"));
     }
 }

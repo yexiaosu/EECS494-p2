@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class HandCards : MonoBehaviour
@@ -19,20 +18,19 @@ public class HandCards : MonoBehaviour
             handCardsObjects.Add(child.gameObject);
         }
 
-        if (GameObject.Find("HasCards"))
+        if (GameObject.Find("PlayerManager"))
         {
-            handCards = new List<int>(GameObject.Find("HasCards").GetComponent<PlayerManager>().handCards);
+            handCards = new List<int>(GameObject.Find("PlayerManager").GetComponent<PlayerManager>().handCards);
         }
-        if (handCards.Count == 0)
+        if (GameObject.Find("LevelManager").GetComponent<LevelManager>().currLevel == 0)
         {
-            // draw five new cards when initialize
-            handCards.Add(Draw());
-            handCards.Add(Draw());
-            handCards.Add(Draw());
-            handCards.Add(Draw());
-            handCards.Add(Draw());
+            // initial cards
+            handCards.Add(0);
+            handCards.Add(1);
+            handCards.Add(5);
+            handCards.Add(6);
         }
-        if (GameObject.Find("HasCards").GetComponent<PlayerManager>().nextPowerUp == 2)
+        if (GameObject.Find("PlayerManager").GetComponent<PlayerManager>().nextPowerUp == 2)
         {
             // draw two new cards, until 10
             int i = 0;
@@ -84,13 +82,11 @@ public class HandCards : MonoBehaviour
     public void AddHandCards(int cardID)
     {
         handCards.Add(cardID);
-        UpdateHandCards();
     }
 
     public void RemoveHandCards(int cardIndex)
     {
         handCards.RemoveAt(cardIndex);
-        UpdateHandCards();
     }
 }
 

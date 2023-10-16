@@ -134,6 +134,25 @@ public class LevelManager : MonoBehaviour
                 currLevel = targetLevel;
                 currLevelsCol++;
             }
+            if (path.Count > 2)
+            {
+                // strengthen enemies
+                EnemyManager em = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
+                if (path.Count % 2 == 1)
+                    em.UpdateMaxHealth(500);
+                else
+                    em.UpdateManaAmp(25);
+            }
+            if (path.Count > 4)
+            {
+                EnemyManager em = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
+                em.deckStrength++;
+            }
+            if (path.Count > 7)
+            {
+                EnemyManager em = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
+                em.deckStrength++;
+            }
             validNextLevels.Clear();
             int idx = levelArray[currLevelsCol].FindIndex(item => item == targetLevel);
             GameObject curr = levels.transform.GetChild(currLevelsCol).GetChild(idx).gameObject;

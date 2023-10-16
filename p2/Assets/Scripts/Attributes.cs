@@ -29,7 +29,6 @@ public class Attributes : MonoBehaviour
     public void UpdateManaAmp(int amount)
     {
         manaAmp = amount;
-        Debug.Log(manaAmp);
         manaAmpText.text = "Mana Amplification: " + manaAmp.ToString();
     }
 

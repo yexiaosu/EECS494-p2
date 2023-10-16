@@ -429,7 +429,7 @@ MonoBehaviour:
   m_Text: "Level Map:\n*Click on a grid to move to that level. \n*You can only move
     to levels next to the current level.\nBattle Prepare:\n*Drag the cards to build
     a deck.\nBattle:\n*The battle will be conducted automatically based on your deck.
-    \n*You will win if you beat the enemy in 20 turns.\n*You will get power ups after
+    \n*You will win if you beat the enemy in 40 turns.\n*You will get power ups after
     winning the game based on the level you choose."
 --- !u!222 &637292538
 CanvasRenderer:

@@ -40,6 +40,7 @@ public class CardManager : MonoBehaviour
                         // The slot was not empty before
                         handCards.GetComponent<HandCards>().AddHandCards(previous.GetComponent<CardDetail>().cardID);
                     }
+                    handCards.GetComponent<HandCards>().UpdateHandCards();
                     // update the deck
                     deck.GetComponent<Deck>().UpdateDeck(card.GetComponent<CardDetail>().cardID, slot.GetComponent<DeckSlot>().deckIndex);
                     return;
@@ -76,6 +77,7 @@ public class CardManager : MonoBehaviour
                 GameObject emptySlot = (GameObject)Instantiate(Resources.Load("EmptyCard"), initPos, Quaternion.identity);
                 emptySlot.transform.parent = card.transform.parent;
                 handCards.GetComponent<HandCards>().AddHandCards(card.transform.gameObject.GetComponent<CardDetail>().cardID);
+                handCards.GetComponent<HandCards>().UpdateHandCards();
                 // update the deck
                 deck.GetComponent<Deck>().UpdateDeck(-1, emptySlot.transform.parent.GetComponent<DeckSlot>().deckIndex);
                 Destroy(card);

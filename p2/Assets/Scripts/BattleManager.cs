@@ -8,7 +8,7 @@ public class BattleManager : MonoBehaviour
     public GameObject playerStatusNumber;
     public GameObject enemyStatusNumber;
     public GameObject winOrLose;
-    public int maxTurns = 20;
+    public int maxTurns = 40;
     public Text turn;
 
     private List<int> playerDeck;
@@ -25,18 +25,20 @@ public class BattleManager : MonoBehaviour
     private GameObject enemy;
     private int currTurn = 1;
     private PlayerManager pm;
+    private EnemyManager em;
 
     // Start is called before the first frame update
     void Start()
     {
-        pm = GameObject.Find("HasCards").GetComponent<PlayerManager>();
+        pm = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+        em = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
         playerDeck = new List<int>(pm.playerDeck);
         StartCoroutine(SetupBattle());
     }
 
     private IEnumerator SetupBattle()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.05f);
         player = GameObject.Find("Player");
         enemy = GameObject.Find("Enemy");
         // deal with power ups
@@ -56,8 +58,9 @@ public class BattleManager : MonoBehaviour
         player.GetComponent<Attributes>().UpdateManaAmp(pm.manaAmp);
         enemyDeck = new List<int>(GameObject.Find("EnemyDeck").GetComponent<Deck>().deckCards);
         enemyDeck.RemoveAll(item => item == -1);
-        //playerDeck = new List<int>(GameObject.Find("PlayerDeck").GetComponent<Deck>().deckCards);
-        //playerDeck.RemoveAll(item => item == -1);
+        enemy.GetComponent<HealthSystemForDummies>().AddToMaximumHealth(em.maxHealth - 1000);
+        enemy.GetComponent<HealthSystemForDummies>().AddToCurrentHealth(em.maxHealth - 1000);
+        enemy.GetComponent<Attributes>().UpdateManaAmp(em.manaAmp);
         turn.text = currTurn.ToString();
         StartCoroutine(PlayerTurn());
     }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Deck : MonoBehaviour
 {
@@ -17,14 +18,14 @@ public class Deck : MonoBehaviour
         // init deck cards
         if (isPlayer)
         {
-            if (GameObject.Find("HasCards"))
+            if (GameObject.Find("PlayerManager"))
             {
-                deckCards = new List<int>(GameObject.Find("HasCards").GetComponent<PlayerManager>().playerDeck);
+                deckCards = new List<int>(GameObject.Find("PlayerManager").GetComponent<PlayerManager>().playerDeck);
             }
         }
         else
         {
-            deckCards = new List<int>(CardsInfo.GetEnemyDeck());
+            deckCards = new List<int>(CardsInfo.GetEnemyDeck(GameObject.Find("EnemyManager").GetComponent<EnemyManager>().deckStrength));
         }
         for (int i = deckCards.Count; i < 8; i++)
         {
@@ -42,7 +43,8 @@ public class Deck : MonoBehaviour
                 string cardName = cards[deckCards[deckSlotIndex]].Name;
                 GameObject currCardPos = child.GetChild(0).gameObject;
                 GameObject currCard = (GameObject)Instantiate(Resources.Load(cardName), currCardPos.transform.position, Quaternion.identity);
-                Destroy(currCard.GetComponent<DragDrop>());
+                if (SceneManager.GetActiveScene().name == "Battle")
+                    Destroy(currCard.GetComponent<DragDrop>());
                 currCard.transform.localScale = currCard.transform.localScale;
                 currCard.transform.parent = child;
                 Destroy(currCardPos);

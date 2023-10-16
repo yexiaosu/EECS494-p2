@@ -35,12 +35,12 @@ public static class CardsInfo
     static List<Card> Cards = new List<Card> {
         new Card(0, "Attack", 0, 5, 0, 0, 1, 0),
         new Card(1, "Heal", 0, 0, 5, 0, 1, 0),
-        new Card(2, "Guard", 0, 0, 0, 10, 1, 0),
+        new Card(2, "Guard", 0, 0, 0, 5, 1, 0),
         new Card(3, "Claw", 0, 2, 0, 0, 2, 0),
         new Card(4, "Lifesteal", 1, 8, 5, 0, 1, 1),
         new Card(5, "Blizzard", 1, 2, 0, 0, 4, 1),
         new Card(6, "Mana Surge", 0, 1, 0, 0, 1, 1, mana: 2),
-        new Card(7, "Fireball", 1, 20, 0, 0, 1, 2),
+        new Card(7, "Fireball", 1, 10, 0, 0, 1, 2),
         new Card(8, "Heal Rune", 0, 0, 2, 0, 1, 2, true),
     };
 
@@ -57,8 +57,9 @@ public static class CardsInfo
     static List<List<int>> EnemyDecks = new List<List<int>>
     {
         new List<int>{0, 0, 0},
-        new List<int>{2, 0, 0},
+        new List<int>{0, 0, 1},
         new List<int>{0, 1, 0},
+        new List<int>{2, 0, 0},
         new List<int>{2, 0, 3},
         new List<int>{0, 0, 0, 6, 4},
         new List<int>{0, 0, 6, 4, 7},
@@ -67,8 +68,24 @@ public static class CardsInfo
         new List<int>{8, 0, 0, 6, 4, 4, 0, 0},
     };
 
-    public static List<int> GetEnemyDeck()
+    public static List<int> GetEnemyDeck(int deckStrength)
     {
-        return EnemyDecks[Random.Range(0, EnemyDecks.Count)];
+        int deckNum = 0;
+        switch (deckStrength)
+        {
+            case 0:
+                deckNum = Random.Range(0, 3);
+                break;
+            case 1:
+                deckNum = Random.Range(3, 7);
+                break;
+            case 2:
+                deckNum = Random.Range(7, 10);
+                break;
+            default:
+                deckNum = Random.Range(7, 10);
+                break;
+        }
+        return EnemyDecks[deckNum];
     }
 }
